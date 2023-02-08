@@ -1,6 +1,8 @@
 import argparse
 import re
 
+from movements import Orientations, make_movements
+
 
 def get_state_and_movements(s: str) -> dict:
     """
@@ -48,7 +50,21 @@ def parse_inputs():
 
 def main():
     request = parse_inputs()
-    print(request)
+
+    for state_and_cmds in request["states_and_movements"]:
+        x, y, o = (
+            state_and_cmds["x"],
+            state_and_cmds["y"],
+            state_and_cmds["orientation"],
+        )
+        movements = state_and_cmds["movements"]
+        x_size, y_size = request["x_size"], request["y_size"]
+
+        state, status = make_movements(
+            (x, y, Orientations[o]), movements, (x_size, y_size)
+        )
+        x, y, o = state
+        print(f"({x}, {y}, {o}) {status}")
 
 
 if __name__ == "__main__":
