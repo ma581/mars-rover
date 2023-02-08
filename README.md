@@ -22,9 +22,9 @@ $ source venv/bin/activate
 ```shell
 (venv) $ python marsrover.py 4 8  '(2, 3, E) LFRFF' '(0, 2, N) FFLFRFF'                
 ```
+Note that I have added single quotes so that the bash terminal does not try to interpret the parentheses. 
 
-
-## Tests
+## Unit tests
 ```shell
 (venv) $ python -m unittest
 ```

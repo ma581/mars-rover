@@ -1,59 +1,105 @@
 import unittest
 
-from movements import move, Orientations, make_movements
+from movements import _single_movement, Orientations, Commands, make_movements
 
 
 class TestMovements(unittest.TestCase):
     # Test single movement
-    def test_move_east(self):
-        next_state = move((0, 0, Orientations.E), "F")
-        self.assertEqual((1, 0, Orientations.E), next_state)
+    single_movement_test_cases = [
+        {
+            "initial_state": (0, 0, Orientations.E),
+            "command": "F",
+            "expected_state": (1, 0, Orientations.E),
+        },
+        {
+            "initial_state": (0, 0, Orientations.N),
+            "command": "F",
+            "expected_state": (0, 1, Orientations.N),
+        },
+        {
+            "initial_state": (0, 0, Orientations.S),
+            "command": "F",
+            "expected_state": (0, -1, Orientations.S),
+        },
+        {
+            "initial_state": (0, 0, Orientations.W),
+            "command": "F",
+            "expected_state": (-1, 0, Orientations.W),
+        },
+        {
+            "initial_state": (0, 0, Orientations.N),
+            "command": "R",
+            "expected_state": (0, 0, Orientations.E),
+        },
+        {
+            "initial_state": (0, 0, Orientations.N),
+            "command": "L",
+            "expected_state": (0, 0, Orientations.W),
+        },
+        {
+            "initial_state": (0, 0, Orientations.E),
+            "command": "R",
+            "expected_state": (0, 0, Orientations.S),
+        },
+        {
+            "initial_state": (0, 0, Orientations.E),
+            "command": "L",
+            "expected_state": (0, 0, Orientations.N),
+        },
+    ]
 
-    def test_move_north(self):
-        next_state = move((0, 0, Orientations.N), "F")
-        self.assertEqual((0, 1, Orientations.N), next_state)
-
-    def test_move_south(self):
-        next_state = move((0, 0, Orientations.S), "F")
-        self.assertEqual((0, -1, Orientations.S), next_state)
-
-    def test_move_west(self):
-        next_state = move((0, 0, Orientations.W), "F")
-        self.assertEqual((-1, 0, Orientations.W), next_state)
-
-    def test_turn_right_from_north(self):
-        next_state = move((0, 0, Orientations.N), "R")
-        self.assertEqual((0, 0, Orientations.E), next_state)
-
-    def test_turn_left_from_north(self):
-        next_state = move((0, 0, Orientations.N), "L")
-        self.assertEqual((0, 0, Orientations.W), next_state)
-
-    def test_turn_right_from_east(self):
-        next_state = move((0, 0, Orientations.E), "R")
-        self.assertEqual((0, 0, Orientations.S), next_state)
-
-    def test_turn_left_from_east(self):
-        next_state = move((0, 0, Orientations.E), "L")
-        self.assertEqual((0, 0, Orientations.N), next_state)
+    def test_single_movement(self):
+        for case in self.single_movement_test_cases:
+            with self.subTest(msg=f'{case["initial_state"]}, {case["command"]}'):
+                next_state = _single_movement(case["initial_state"], case["command"])
+                self.assertEqual(case["expected_state"], next_state)
 
     # Test multiple movements
-    def test_make_movements_east(self):
-        state, status = make_movements((0, 0, Orientations.E), "FFF", (10, 10))
-        self.assertEqual((3, 0, Orientations.E), state)
-        self.assertEqual("", status)
+    multiple_movements_test_cases = [
+        {
+            "initial_state": (0, 0, Orientations.E),
+            "commands": "FFF",
+            "grid_size": (10, 10),
+            "expected_state": (3, 0, Orientations.E),
+            "expected_status": "",
+        },
+        {
+            "initial_state": (0, 0, Orientations.E),
+            "commands": "FFF",
+            "grid_size": (1, 1),
+            "expected_state": (1, 0, Orientations.E),
+            "expected_status": "LOST",
+        },
+        {
+            "initial_state": (2, 3, Orientations.N),
+            "commands": "FLLFR",
+            "grid_size": (4, 8),
+            "expected_state": (2, 3, Orientations.W),
+            "expected_status": "",
+        },
+        {
+            "initial_state": (1, 0, Orientations.S),
+            "commands": "FFRLF",
+            "grid_size": (4, 8),
+            "expected_state": (1, 0, Orientations.S),
+            "expected_status": "LOST",
+        },
+        {
+            "initial_state": (100, 100, Orientations.S), # Initial position is outside the grid!
+            "commands": "F",
+            "grid_size": (1, 1),
+            "expected_state": (0, 0, Orientations.N),    # Return a valid default at (0,0) North
+            "expected_status": "LOST",
+        },
+    ]
 
-    def test_move_outside_grid(self):
-        state, status = make_movements((0, 0, Orientations.E), "FFF", (1, 1))
-        self.assertEqual((1, 0, Orientations.E), state)
-        self.assertEqual("LOST", status)
-
-    def test_move_inside_grid_two(self):
-        state, status = make_movements((2, 3, Orientations.N), "FLLFR", (4, 8))
-        self.assertEqual((2, 3, Orientations.W), state)
-        self.assertEqual("", status)
-
-    def test_move_outside_grid_two(self):
-        state, status = make_movements((1, 0, Orientations.S), "FFRLF", (4, 8))
-        self.assertEqual((1, 0, Orientations.S), state)
-        self.assertEqual("LOST", status)
+    def test_multiple_movements(self):
+        for case in self.multiple_movements_test_cases:
+            with self.subTest(
+                msg=f'{case["initial_state"]}, {case["commands"]}, {case["grid_size"]}'
+            ):
+                next_state, status = make_movements(
+                    case["initial_state"], case["commands"], case["grid_size"]
+                )
+                self.assertEqual(case["expected_state"], next_state)
+                self.assertEqual(case["expected_status"], status)
