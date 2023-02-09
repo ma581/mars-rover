@@ -20,9 +20,12 @@ $ source venv/bin/activate
 ## How to run
 
 ```shell
-(venv) $ python marsrover.py 4 8  '(2, 3, E) LFRFF' '(0, 2, N) FFLFRFF'                
+(venv) $ python marsrover.py \
+4 8 \
+'(2, 3, E) LFRFF' \
+'(0, 2, N) FFLFRFF'                
 ```
-Note that I have added single quotes so that the bash terminal does not try to interpret the parentheses. 
+Note that I have added single quotes so that the bash terminal does not try to interpret the parentheses. Spaces are important in the input as `argparse` is configured to read positional arguments separated by spaces. 
 
 ## Unit tests
 ```shell
