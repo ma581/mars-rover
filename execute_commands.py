@@ -51,7 +51,7 @@ class RobotPosition:
         return f"({self.x}, {self.y}, {self.orientation})"
 
 
-def _single_movement(pos: RobotPosition, cmd: Command) -> RobotPosition:
+def _execute_one_command(pos: RobotPosition, cmd: Command) -> RobotPosition:
     """Make a single movement or rotation"""
     x, y, orientation = pos.x, pos.y, pos.orientation
     if cmd == Command.F.name:
@@ -83,7 +83,7 @@ def _is_outside_grid(pos: RobotPosition, grid_size: Tuple[int, int]) -> bool:
     return x < 0 or x > grid_size[0] or y < 0 or y > grid_size[1]
 
 
-def make_movements(
+def execute_commands(
     pos: RobotPosition,
     cmds: List[Command],
     grid_size: Tuple[int, int],
@@ -92,7 +92,7 @@ def make_movements(
     Take a list of commands, initial state and grid limits and move the robot
     """
     for cmd in cmds:
-        next_state = _single_movement(pos, cmd)
+        next_state = _execute_one_command(pos, cmd)
         if _is_outside_grid(next_state, grid_size):
             return pos, "LOST"
         else:
