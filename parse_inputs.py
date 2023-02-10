@@ -1,6 +1,6 @@
 import argparse
 import re
-from movements import Orientations
+from movements import Orientation, RobotPosition
 
 
 def _get_state_and_commands(s: str) -> dict:
@@ -8,18 +8,19 @@ def _get_state_and_commands(s: str) -> dict:
     Parses a string like '(2, 3, E) LFRFF' into a dict with the initial state of the robot
     and the movement commands for the robot
     """
-    pattern = "([0-9]*)\, ([0-9]*)\, ([NSEW])\) ([LRF]+)"
+    pattern = "\(([0-9]*)\, ([0-9]*)\, ([NSEW])\) ([LRF]+)"
     m = re.search(pattern, s)
     try:
         return {
-            "state": (
+            "position": RobotPosition(
                 int(m.group(1)),  # x
                 int(m.group(2)),  # y
-                Orientations[m.group(3)],
+                Orientation(m.group(3)),
             ),
             "commands": m.group(4),
         }
-    except Exception:
+    except Exception as e:
+        print(e)
         print(f"Invalid input '{s}' as it did not match regex:{pattern}")
         return None
 

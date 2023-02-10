@@ -1,50 +1,55 @@
 import unittest
 
-from movements import _single_movement, Orientations, Commands, make_movements
+from movements import (
+    RobotPosition,
+    _single_movement,
+    Orientation,
+    make_movements,
+)
 
 
 class TestMovements(unittest.TestCase):
     # Test single movement
     single_movement_test_cases = [
         {
-            "initial_state": (0, 0, Orientations.E),
+            "initial_state": RobotPosition(0, 0, Orientation.EAST),
             "command": "F",
-            "expected_state": (1, 0, Orientations.E),
+            "expected_state": RobotPosition(1, 0, Orientation.EAST),
         },
         {
-            "initial_state": (0, 0, Orientations.N),
+            "initial_state": RobotPosition(0, 0, Orientation.NORTH),
             "command": "F",
-            "expected_state": (0, 1, Orientations.N),
+            "expected_state": RobotPosition(0, 1, Orientation.NORTH),
         },
         {
-            "initial_state": (0, 0, Orientations.S),
+            "initial_state": RobotPosition(0, 0, Orientation.SOUTH),
             "command": "F",
-            "expected_state": (0, -1, Orientations.S),
+            "expected_state": RobotPosition(0, -1, Orientation.SOUTH),
         },
         {
-            "initial_state": (0, 0, Orientations.W),
+            "initial_state": RobotPosition(0, 0, Orientation.WEST),
             "command": "F",
-            "expected_state": (-1, 0, Orientations.W),
+            "expected_state": RobotPosition(-1, 0, Orientation.WEST),
         },
         {
-            "initial_state": (0, 0, Orientations.N),
+            "initial_state": RobotPosition(0, 0, Orientation.NORTH),
             "command": "R",
-            "expected_state": (0, 0, Orientations.E),
+            "expected_state": RobotPosition(0, 0, Orientation.EAST),
         },
         {
-            "initial_state": (0, 0, Orientations.N),
+            "initial_state": RobotPosition(0, 0, Orientation.NORTH),
             "command": "L",
-            "expected_state": (0, 0, Orientations.W),
+            "expected_state": RobotPosition(0, 0, Orientation.WEST),
         },
         {
-            "initial_state": (0, 0, Orientations.E),
+            "initial_state": RobotPosition(0, 0, Orientation.EAST),
             "command": "R",
-            "expected_state": (0, 0, Orientations.S),
+            "expected_state": RobotPosition(0, 0, Orientation.SOUTH),
         },
         {
-            "initial_state": (0, 0, Orientations.E),
+            "initial_state": RobotPosition(0, 0, Orientation.EAST),
             "command": "L",
-            "expected_state": (0, 0, Orientations.N),
+            "expected_state": RobotPosition(0, 0, Orientation.NORTH),
         },
     ]
 
@@ -57,38 +62,53 @@ class TestMovements(unittest.TestCase):
     # Test multiple movements
     multiple_movements_test_cases = [
         {
-            "initial_state": (0, 0, Orientations.E),
+            "initial_state": RobotPosition(0, 0, Orientation.EAST),
             "commands": "FFF",
             "grid_size": (10, 10),
-            "expected_state": (3, 0, Orientations.E),
+            "expected_state": RobotPosition(3, 0, Orientation.EAST),
             "expected_status": "",
         },
         {
-            "initial_state": (0, 0, Orientations.E),
+            "initial_state": RobotPosition(0, 0, Orientation.EAST),
+            "commands": "FXXXXFF",
+            "grid_size": (10, 10),
+            "expected_state": RobotPosition(3, 0, Orientation.EAST),
+            "expected_status": "",
+        },
+        {
+            "initial_state": RobotPosition(0, 0, Orientation.EAST),
             "commands": "FFF",
             "grid_size": (1, 1),
-            "expected_state": (1, 0, Orientations.E),
+            "expected_state": RobotPosition(1, 0, Orientation.EAST),
             "expected_status": "LOST",
         },
         {
-            "initial_state": (2, 3, Orientations.N),
+            "initial_state": RobotPosition(2, 3, Orientation.NORTH),
             "commands": "FLLFR",
             "grid_size": (4, 8),
-            "expected_state": (2, 3, Orientations.W),
+            "expected_state": RobotPosition(2, 3, Orientation.WEST),
             "expected_status": "",
         },
         {
-            "initial_state": (1, 0, Orientations.S),
+            "initial_state": RobotPosition(1, 0, Orientation.SOUTH),
             "commands": "FFRLF",
             "grid_size": (4, 8),
-            "expected_state": (1, 0, Orientations.S),
+            "expected_state": RobotPosition(1, 0, Orientation.SOUTH),
             "expected_status": "LOST",
         },
         {
-            "initial_state": (100, 100, Orientations.S), # Initial position is outside the grid!
+            "initial_state": RobotPosition(
+                100,
+                100,
+                Orientation.SOUTH,
+            ),  # Initial position is outside the grid!
             "commands": "F",
             "grid_size": (1, 1),
-            "expected_state": (0, 0, Orientations.N),    # Return a valid default at (0,0) North
+            "expected_state": RobotPosition(
+                100,
+                100,
+                Orientation.SOUTH,
+            ),  # Return initial position
             "expected_status": "LOST",
         },
     ]
