@@ -14,14 +14,14 @@ def _get_position_and_commands(s: str) -> Tuple[RobotPosition, List[Command]]:
     try:
         return (
             RobotPosition(
-                int(m.group(1)),  
-                int(m.group(2)),  
+                int(m.group(1)),
+                int(m.group(2)),
                 Orientation(m.group(3)),
-            ), m.group(4)
+            ),
+            m.group(4),
         )
     except Exception as e:
-        print(e)
-        print(f"Invalid input '{s}' as it did not match regex:{pattern}")
+        print(f"Invalid input '{s}' as it did not match regex:{pattern}. {e}")
         return None, None
 
 
@@ -44,6 +44,9 @@ def parse_inputs() -> dict:
     )
 
     args = parser.parse_args()
+    if args.x_size < 0 or args.y_size < 0:
+        raise ValueError(f"'{(args.x_size, args.y_size)} is less than 0")
+
     return {
         "grid_size": (args.x_size, args.y_size),
         "position_and_commands": [

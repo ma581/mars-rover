@@ -91,10 +91,13 @@ def execute_commands(
     """
     Take a list of commands, initial state and grid limits and move the robot
     """
+    if _is_outside_grid(pos, grid_size):
+        return pos, "LOST"
+
     for cmd in cmds:
-        next_state = _execute_one_command(pos, cmd)
-        if _is_outside_grid(next_state, grid_size):
+        next_pos = _execute_one_command(pos, cmd)
+        if _is_outside_grid(next_pos, grid_size):
             return pos, "LOST"
         else:
-            pos = next_state
+            pos = next_pos
     return pos, ""

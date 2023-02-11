@@ -4,7 +4,11 @@ from parse_inputs import parse_inputs
 
 def main(request=None):
     if not request:  # Allows injection for unit testing
-        request = parse_inputs()
+        try:
+            request = parse_inputs()
+        except Exception as e:
+            print(f"{e}")
+            return
 
     for pos, cmds in request["position_and_commands"]:
         if pos is not None:

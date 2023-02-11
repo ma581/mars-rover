@@ -34,8 +34,19 @@ class TestParseArgs(unittest.TestCase):
     )
     def test_parse_inputs(self, _):
         actual = parse_inputs()
-        self.assertEquals((1, 2), actual["grid_size"])
-        self.assertEquals(
+        self.assertEqual((1, 2), actual["grid_size"])
+        self.assertEqual(
             RobotPosition(0, 2, Orientation.EAST), actual["position_and_commands"][0][0]
         )
-        self.assertEquals("LRF", actual["position_and_commands"][0][1])
+        self.assertEqual("LRF", actual["position_and_commands"][0][1])
+
+    @mock.patch(
+        "argparse.ArgumentParser.parse_args",
+        return_value=argparse.Namespace(
+            x_size=-11,
+            y_size=2,
+            position_and_commands=["1 2 (0, 2, E) LRF"],
+        ),
+    )
+    def test_parse_inputs_invalid_grid(self, _):
+        self.assertRaises(ValueError, parse_inputs)

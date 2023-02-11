@@ -98,15 +98,15 @@ class TestExecuteCommands(unittest.TestCase):
         },
         {
             "initial_position": RobotPosition(
-                100,
-                100,
+                0,
+                2,
                 Orientation.SOUTH,
             ),  # Initial position is outside the grid!
             "commands": "F",
-            "grid_size": (1, 1),
+            "grid_size": (1, 1), # Move inside grid
             "expected_position": RobotPosition(
-                100,
-                100,
+                0,
+                2,
                 Orientation.SOUTH,
             ),  # Return initial position
             "expected_status": "LOST",
